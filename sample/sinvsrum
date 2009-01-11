@@ -1,0 +1,28 @@
+# A quick comparison of Sinatra and Rum.
+
+# get '/hi' do
+on get, path('hi') do
+
+# get '/:name' do
+on get, segment do |_, name|
+
+# get '/say/*/to/*' do
+on get, path('say'), segment, path('to'), segment do |_, _, what, _, whom, _|
+
+# get '/download/*.*' do
+on get, path('download'), segment, extension do |_, _, filename, ext|
+
+# get '/foo', :agent => /Songbird (\d\.\d)[\d\/]*?/ do
+on get, path('foo'), check{env["HTTP_USER_AGENT"] =~ /Songbird (\d\.\d)[\d\/]*?/} do
+
+# post '/foo' do
+on post, path('foo'), param("bar") do |bar|
+
+# redirect '/'
+res.redirect '/'
+
+# redirect '/', 307 
+res.redirect '/', 307
+
+# status 404
+res.status = 404
