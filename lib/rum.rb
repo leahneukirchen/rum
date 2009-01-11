@@ -31,6 +31,10 @@ class Rum
     @matched = true
   end
 
+  def any(*args)
+    args.any? { |a| a == true || (a != false && a.call) }
+  end
+
   def also
     @matched = false
   end
