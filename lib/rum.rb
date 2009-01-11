@@ -82,7 +82,12 @@ class Rum
   def put; req.put?; end
   def delete; req.delete?; end
 
-  # def accept(mimetype, default=nil)
+  def accept(mimetype)
+    lambda {
+      env['HTTP_ACCEPT'].split(',').any? { |s| s.strip == mimetype }  and
+        res['Content-Type'] = mimetype
+    }
+  end
 
   def run(app)
     throw :rum_run_next_app, app
