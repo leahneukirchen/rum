@@ -25,7 +25,9 @@ class Rum
 
   def on(*arg, &block)
     return  if @matched
+    s, p = env["SCRIPT_NAME"], env["PATH_INFO"]
     yield *arg.map { |a| a == true || (a != false && a.call) || return }
+    env["SCRIPT_NAME"], env["PATH_INFO"] = s, p
     @matched = true
   end
 
@@ -36,7 +38,7 @@ class Rum
   def path(p)
     lambda {
       if env["PATH_INFO"] =~ /\A\/(#{p})(\/|\z)/   #/
-        env["SCRIPT_NAME"] << "/#{$1}"
+        env["SCRIPT_NAME"] += "/#{$1}"
         env["PATH_INFO"] = $2 + $'
         $1
       end
