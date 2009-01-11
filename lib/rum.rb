@@ -107,4 +107,15 @@ class Rum
   def run(app)
     throw :rum_run_next_app, app
   end
+
+  def puts(*args)
+    args.each { |s|
+      res.write s
+      res.write "\n"
+    }
+  end
+
+  def print(*args)
+    args.each { |s| res.write s }
+  end
 end
