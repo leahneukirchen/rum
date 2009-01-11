@@ -19,6 +19,9 @@ run Rum.new {
       info("foo/bar", self)
     end
   end
+  on get, path('say'), segment, path('to'), segment do |_, _, what, _, whom, _|
+    info("say/#{what}/to/#{whom}", self)
+  end
   also
   on default do
     info("default", self)
