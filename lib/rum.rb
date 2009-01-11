@@ -1,5 +1,16 @@
 require 'rack'
 
+class Rack::Response
+  # 301 Moved Permanently
+  # 302 Found
+  # 303 See Other
+  # 307 Temporary Redirect
+  def redirect(target, status=302)
+    self.status = status
+    self["Location"] = target
+  end
+end
+
 class Rum
   attr_reader :env, :req, :res
 
