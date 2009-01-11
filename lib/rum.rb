@@ -104,6 +104,10 @@ class Rum
     }
   end
 
+  def check(&block)
+    block
+  end
+
   def run(app)
     throw :rum_run_next_app, app
   end
