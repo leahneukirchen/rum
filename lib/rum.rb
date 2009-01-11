@@ -1,11 +1,4 @@
-# rum - this router (the heart)
-# soda - htemplate (plain and simple)
-# lime - json db (the persistent)
-# ice - ?
-
-$: << "~/projects/rack/lib"
 require 'rack'
-require 'pp'
 
 class Rum
   attr_reader :env, :req, :res
@@ -23,14 +16,16 @@ class Rum
     @req = Rack::Request.new(env)
     @res = Rack::Response.new
     @matched = false
-    instance_eval(&@blk)
-    @res.status = 404  unless @matched || !@res.empty?
-    @res.finish
+    catch(:rum_run_next_app) {
+      instance_eval(&@blk)
+      @res.status = 404  unless @matched || !@res.empty?
+      return @res.finish
+    }.call(env)
   end
 
   def on(*arg, &block)
     return  if @matched
-    yield *arg.map { |a| a.call || return }
+    yield *arg.map { |a| a == true || (a != false && a.call) || return }
     @matched = true
   end
 
@@ -69,45 +64,25 @@ class Rum
   end
 
   def default
-    lambda { true }
+    true
   end
+
+  def host(h)
+    req.host == h
+  end
+
+  def method(m)
+    req.request_method = m
+  end
+
+  def get; req.get?; end
+  def post; req.post?; end
+  def put; req.put?; end
+  def delete; req.delete?; end
 
   # def accept(mimetype, default=nil)
-end
 
-app = Rum.new do
-  on path('foo') do
-    res.write "in foo"
-    pp env
-    on path('bar') do
-      res.write "and in bar"
-    end
-    on param('x', "99") do |x|
-      res.write "got x with #{x}"
-    end
-    also
-    on path("n"), number do |n|
-      res.write "got #{n}"
-    end
-    also
-    on path("hello") do
-      on extension("txt"), segment do |_, name|
-        res.write "HELLO, "
-        res.write name
-      end
-      on extension("html"), segment do |_, name|
-        p name
-        res.write "<h1>hello, #{name}</h1>"
-      end
-      on extension, segment do |e, name|
-        res.write "what is #{e}!?"
-      end
-      on default do
-        res.write "meh"
-      end
-    end
+  def run(app)
+    throw :rum_run_next_app, app
   end
 end
-
-
-Rack::Handler::WEBrick.run Rack::ShowStatus.new(app), :Port => 9292
