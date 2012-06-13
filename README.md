@@ -1,23 +1,23 @@
-= Rum, the gRand Unified Mapper
+# Rum, the gRand Unified Mapper
 
 Rum is a powerful mapper for your Rack applications that can be used
 as a microframework.  Just throw in a template engine and a data
 backend, and get started!
 
-== Mappings
+## Mappings
 
 Rum apps use a small DSL to set up the mappings:
 
-  MyApp = Rum.new {
-    on get, path('greet') do
-      on param("name") do |name|
-        puts "Hello, #{Rack::Utils.escape_html name}!"
+    MyApp = Rum.new {
+      on get, path('greet') do
+        on param("name") do |name|
+          puts "Hello, #{Rack::Utils.escape_html name}!"
+        end
+        on default do
+          puts "Hello, world!"
+        end
       end
-      on default do
-        puts "Hello, world!"
-      end
-    end
-  }
+    }
 
 This will map GET /greet to the hello world, and GET /greet?name=X to
 a personal greeting.
@@ -28,24 +28,24 @@ note you can use "also" to reset this.)
 
 Multiple "on"-calls can be collapsed to one:
 
-  on a do |x|
-    on b do |y|
-      ...
+    on a do |x|
+      on b do |y|
+        ...
+      end
     end
-  end
 
 is the same as 
 
-  on a, b do |x, y|
-    ...
-  end
+    on a, b do |x, y|
+      ...
+    end
 
 Every predicate returns data which is passed to the block.  Use _ to
 ignore data you don't need when using the collapsed calling method:
 
-  on get, path('foo'), param('bar') do |_, _, bar| ... end
+    on get, path('foo'), param('bar') do |_, _, bar| ... end
 
-== Predicates
+## Predicates
 
 These predicates are predefined for your mappings:
 
@@ -81,7 +81,7 @@ check{block}: general check whether block returns a trueish value.
 
 any(...): meta-predicate to check if any argument matches.
 
-== Helpers
+## Helpers
 
 For convenience, Rum provides a few helpers:
 
@@ -95,7 +95,7 @@ run(app): directly transfer to the Rack application app (which can be
 
 print, puts: wrappers for res.write.
 
-== Copyright
+## Copyright
 
 Copyright (C) 2008, 2009 Christian Neukirchen <http://purl.org/net/chneukirchen>
 
@@ -116,7 +116,7 @@ THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-== Links
+## Links
 
 Rack:: <http://rack.rubyforge.org/>
 Christian Neukirchen:: <http://chneukirchen.org/>
